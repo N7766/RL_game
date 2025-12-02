@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>GridWorld RL 实验室</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://unpkg.com/three@0.152.2/build/three.min.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="app">
+      <div id="canvas-container"></div>
+      <div id="control-panel">
+        <h1>GridWorld RL 实验室</h1>
+        <div class="panel-section">
+          <button id="init-button">初始化场景</button>
+          <button id="reset-button">重置环境</button>
+          <button id="step-button">单步 Step</button>
+          <button id="play-episode-button">播放一次训练</button>
+        </div>
+
+        <div class="panel-section" id="map-config-section">
+          <label for="map-size-select">地图尺寸</label>
+          <select id="map-size-select">
+            <option value="5">5 x 5</option>
+            <option value="10" selected>10 x 10</option>
+            <option value="15">15 x 15</option>
+            <option value="20">20 x 20</option>
+            <option value="25">25 x 25</option>
+          </select>
+          <p class="hint">切换后会随机生成一个保证可达的新地图。</p>
+        </div>
+
+        <div class="panel-section stats">
+          <p><strong>Episode:</strong> <span id="episode-value">-</span></p>
+          <p><strong>Step:</strong> <span id="step-value">-</span></p>
+          <p><strong>累计奖励:</strong> <span id="reward-value">0</span></p>
+          <p><strong>状态:</strong> <span id="status-value">等待初始化</span></p>
+        </div>
+
+        <div class="panel-section" id="training-config-section">
+          <h2>训练控制</h2>
+          <label for="train-episodes-input">批量训练 episodes 数</label>
+          <input
+            type="number"
+            id="train-episodes-input"
+            min="1"
+            value="10"
+          />
+
+          <label for="max-episodes-input">配置最大 episodes</label>
+          <input
+            type="number"
+            id="max-episodes-input"
+            min="1"
+            value="100"
+          />
+
+          <label for="max-steps-input">每个 episode 最大步数</label>
+          <input
+            type="number"
+            id="max-steps-input"
+            min="10"
+            value="100"
+          />
+
+          <label for="step-penalty-input">每步惩罚</label>
+          <input
+            type="number"
+            id="step-penalty-input"
+            step="0.01"
+            value="-0.01"
+          />
+
+          <label for="wall-penalty-input">撞墙惩罚</label>
+          <input
+            type="number"
+            id="wall-penalty-input"
+            step="0.01"
+            value="-0.05"
+          />
+
+          <label for="goal-reward-input">到达目标奖励</label>
+          <input
+            type="number"
+            id="goal-reward-input"
+            step="0.1"
+            value="1"
+          />
+
+          <div class="button-row">
+            <button id="apply-training-button">应用训练配置</button>
+            <button id="train-run-button">开始批量训练</button>
+          </div>
+
+          <div class="panel-section mini stats" id="training-stats">
+            <p><strong>平均奖励:</strong> <span id="avg-reward-value">-</span></p>
+            <p><strong>最佳奖励:</strong> <span id="best-reward-value">-</span></p>
+            <p>
+              <strong>最近奖励:</strong>
+              <span id="last-reward-value">-</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <p>
+            按下「播放一次训练」后，后端会跑完整个 episode，前端会按轨迹动画回放。你可以用此基础代码继续扩展自己的
+            RL 实验。
+          </p>
+          <p class="hint">
+            API 默认指向 <code>http://127.0.0.1:8000</code>，如需调整，请修改
+            <code>main.js</code> 中的 <code>API_BASE</code>。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="episode-result-modal" class="result-modal hidden">
+      <div class="result-modal__content">
+        <h2 id="result-title">任務完成！</h2>
+        <p id="result-message">小機器人成功到達目標！</p>
+        <div class="result-modal__stats">
+          <p>
+            <strong>算法:</strong>
+            <span id="result-algo">Q-Learning</span>
+          </p>
+          <p>
+            <strong>使用步數:</strong>
+            <span id="result-steps">-</span>
+          </p>
+          <p>
+            <strong>總獎勵:</strong>
+            <span id="result-reward">-</span>
+          </p>
+        </div>
+        <div class="button-row">
+          <button id="modal-close-button">關閉</button>
+          <button id="modal-replay-button">再來一輪</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
+
